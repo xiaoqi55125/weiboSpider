@@ -23,6 +23,9 @@ function getSinaUserByPageIndex(pageIndex){
         }
     });
 }
+var closeDialog = function () {
+    $.unblockUI();
+};
 
 function renderDataToTable(data){
     if(data.Result === 'OK'){
@@ -67,3 +70,22 @@ function renderDataToTable(data){
 function addWeiboToRight(name){
     $("#train_target").append(name+',');
 }
+
+function addWeiboUserByScreenName(){
+    $("#sinaUserScreenName").val("");
+    $.blockUI({
+        theme:true,
+        title: '添加新的新浪微博用户',
+        message : $('#dialogContainer'),
+        themedCSS: {
+            width: '300px',
+            top: '20%',
+            left: '30%'
+        },
+        onOverlayClick: $.unblockUI
+    });
+}
+function addSinaUserInfoToDatabase(){
+    $("#sinaUserScreenName").val();
+}
+

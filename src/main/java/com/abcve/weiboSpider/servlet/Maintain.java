@@ -2,8 +2,11 @@ package com.abcve.weiboSpider.servlet;
 
 import com.abcve.weiboSpider.Entity.SinaUser;
 import com.abcve.weiboSpider.dao.UserMapper;
+import com.abcve.weiboSpider.util.HttpUtility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import  com.google.gson.JsonParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.io.Resources;
@@ -16,9 +19,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
+import java.util.Map;
 
 /**
  * Created by zhicheng on 14/9/19.
@@ -45,6 +49,8 @@ public class Maintain extends HttpServlet {
             case  "sinaUserList":
                 this.getAllSinaUser(resp,Integer.parseInt(pageIndex));
                 break;
+            case "insertSinaUser":
+                this.insertUserInfoFromScreenName(req,resp);
 
         }
 
@@ -141,7 +147,30 @@ public class Maintain extends HttpServlet {
                 "}";
     }
 
-    //apis
-    //http://api.weibo.com/2/statuses/timeline_batch.json?source=211160679&screen_names=黄健翔,一个汉字两个字节,海信手机官方微博
+    protected void insertUserInfoFromScreenName(HttpServletRequest req,HttpServletResponse resp) throws IOException {
+        //HttpRequestProxy
+        String sinaUserScreenName = req.getParameter("sinaUserScreenName");
+        sinaUserScreenName = "一个汉字两个字节";
+        //HttpURLConnection apiResult ;
+        Map<String,String> map = new HashMap<>();
+        map.put("source","211160679");
+        map.put("screen_name",sinaUserScreenName);
+        HttpUtility.sendGetRequest("http://api.weibo.com/2/users/show.json?source=211160679&screen_name="+URLEncoder.encode("一个汉字两个字节", "utf-8"));
+        String apiResult =HttpUtility.readSingleLineRespone();
+        JsonParser jsonParser = new JsonParser();
+        JsonObject jsonObject = (JsonObject) jsonParser.parse(apiResult);
+         logger.info(apiResult);
+        String idstr = jsonObject.get("idstr").toString();
+        int follow = Integer.parseInt(jsonObject.get("friends_count").toString());
+        int follower = Integer.parseInt(jsonObject.get("followers_count").toString());
+        int weibocnt = Integer.parseInt(jsonObject.get("statuses_count").toString());
 
+
+    }
+
+    //apis
+    //get weibo info
+    //http://api.weibo.com/2/statuses/timeline_batch.json?source=211160679&screen_names=黄健翔,一个汉字两个字节,海信手机官方微博
+    //get user info
+   // http://api.weibo.com/2/users/show.json?source=211160679&screen_name=一个汉字两个字节
 }

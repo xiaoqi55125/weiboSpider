@@ -35,6 +35,12 @@
         values(#{userName})
     </insert>
 
+    <insert id="addSinaUserFormEntity" parameterMap="SinaUser" useGeneratedKeys="true" keyProperty="userid">
+        insert into weiboSpider.sinaUser(username,realid,follow,follower,weibocnt)
+        values(#(userName),#(realid),#{follow},#{follower},#{weibocnt})
+
+    </insert>
+
     <delete id="deleteOneUser" parameterType="int">
         delete from weiboSpider.sinaUser where userid = #{userId}
     </delete>

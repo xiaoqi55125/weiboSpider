@@ -13,6 +13,7 @@
     <script>
         $(function($) {
             getSinaUserByPageIndex(0);
+
         });
     </script>
 </head>
@@ -21,6 +22,7 @@
     <div class=" leftPanel">
         <div style="font-size: 18px;padding-top:5px;padding-bottom: 5px;background-color: #f8f8f8">
             <span >已存联系人</span>
+            <span style="float: right"><a href="javascript:addWeiboUserByScreenName()" >添加用户</a></span>
         </div>
         <div id="tabCot_product_1" class="tabCot">
             <table id="bookListStockOut"  class="tabindex" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -35,9 +37,7 @@
                 </tr>
                 </thead>
                 <tbody id='sinaUserListView'>
-
                 </tbody>
-
             </table>
 
             <div class="fanye">
@@ -50,4 +50,11 @@
     </div>
 </div>
 </body>
+<div id="dialogContainer" style="display: none;" >
+        <div>
+            <input id="sinaUserScreenName" name="sinaUserScreenName" type="text" tabindex="1"/>
+            <input id="okSinaUserBtn" name="okBtn" onclick="addSinaUserInfoToDatabase()" type="button" value="添加" tabindex="2"/>
+            <input type="button" id="noBtn" onclick="closeDialog()" value="取消"/>
+        </div>
+</div>
 </html>
