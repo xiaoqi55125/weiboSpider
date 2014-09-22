@@ -1,0 +1,15 @@
+.wholePanel{
+    width:100%;
+    height:100%;
+    /*margin: 2px;*/
+}
+.leftPanel{
+    width: 50%;
+    float: left;
+    /*padding: 5px 10px 0 10px;*/
+}
+.rightPanel{
+    width: 50%;
+    float: right;
+    /*padding: 5px 10px 0 10px;*/
+}

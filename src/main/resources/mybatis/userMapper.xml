@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--这块等于dao接口的实现  namespace必须和接口的类路径一样-->
+<mapper namespace="com.abcve.weiboSpider.dao.UserMapper">
+    <!-- findUserById必须和接口中的方法名一样  返回一个User  就是刚才的别名  如果不弄别名要连类路径一起写 -->
+    <select id="findUserById" parameterType="HashMap" resultType="SinaUser">
+        select * from weiboSpider.sinaUser  where userid=#{id}
+    </select>
+
+    <!-- 为了返回list 类型而定义的returnMap -->
+    <resultMap type="SinaUser" id="resultListSinaUser">
+        <id column="userid" property="userid" />
+        <result column="username" property="userName" />
+        <result column="realid" property="realid"/>
+        <result column="follow" property="follow"/>
+        <result column="follower" property="follower"/>
+        <result column="weibocnt" property="weibocnt"/>
+    </resultMap>
+
+
+    <select id="findUserByPageIndex" resultMap="resultListSinaUser" parameterType="int">
+     select * from weiboSpider.sinaUser where userid >=
+    (select userid from weiboSpider.sinaUser order by userid limit #{0}, 1) limit 10;
+    </select>
+
+    <select id="findAllUserCnt" resultType="int">
+        select count(0) from weiboSpider.sinaUser
+    </select>
+
+    <insert id="addSinaUser" parameterType="SinaUser"
+            useGeneratedKeys="true" keyProperty="userid">
+        insert into weiboSpider.sinaUser(username)
+        values(#{userName})
+    </insert>
+
+    <delete id="deleteOneUser" parameterType="int">
+        delete from weiboSpider.sinaUser where userid = #{userId}
+    </delete>
+</mapper>
