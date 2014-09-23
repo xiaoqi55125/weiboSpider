@@ -43,6 +43,15 @@
 
     </insert>
 
+    <select id="isExist" parameterType="String" resultType="int">
+        select COUNT(*) from weiboSpider.sinaUser where username = #{useName};
+    </select>
+    <update id='updateSinaUser' parameterType='SinaUser'>
+        UPDATE weiboSpider.sinaUser
+        SET follow= #{follow},follower = #{follower},weibocnt = #{weibocnt} WHERE username = #{userName}
+    </update>
+
+
     <delete id="deleteOneUser" parameterType="int">
         delete from weiboSpider.sinaUser where userid = #{userId}
     </delete>

@@ -71,7 +71,7 @@ public class Maintain extends HttpServlet {
         req.setAttribute("mainContainer", "/WEB-INF/page/weibo/weibo.jsp");
         getAllSinaUser(resp,1);
     }
-
+    //only for test
     protected void testMybatis() {
         SqlSession sqlSession = getSessionFactory().openSession();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
@@ -83,8 +83,7 @@ public class Maintain extends HttpServlet {
             System.out.println(sinaUser.getUserid()+":"+sinaUser.getUserName());
         }
         int isAdd = userMapper.addSinaUser("不知道6");
-        int isDel = userMapper.deleteOneUser(5);
-        logger.info(isAdd+"<------------1就是插入成功"+isDel);
+        logger.info(isAdd+"<------------1就是插入成功");
         sqlSession.commit();
     }
 
@@ -151,32 +150,38 @@ public class Maintain extends HttpServlet {
         //HttpRequestProxy
         req.setCharacterEncoding("UTF-8");
         String sinaUserScreenName = req.getParameter("sinaUserScreenName");
-        //sinaUserScreenName = "一个汉字两个字节";
-        //HttpURLConnection apiResult ;
-        Map<String,String> map = new HashMap<>();
-//        map.put("source","211160679");
-//        map.put("screen_name",sinaUserScreenName);
+        SqlSession sqlSession = getSessionFactory().openSession();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         //HttpUtility.sendGetRequest("http://api.weibo.com/2/users/show.json?source=211160679&screen_name="+URLEncoder.encode(sinaUserScreenName, "utf-8"));
         String url = "http://api.weibo.com/2/users/show.json?source=211160679&screen_name="+URLEncoder.encode(sinaUserScreenName, "utf-8");
         HttpUtility.sendGetRequest(url);
         String apiResult =HttpUtility.readSingleLineRespone();
         JsonParser jsonParser = new JsonParser();
         JsonObject jsonObject = (JsonObject) jsonParser.parse(apiResult);
-         logger.info(apiResult);
+        logger.info(apiResult);
         String idstr = jsonObject.get("id").toString();
         int follow = Integer.parseInt(jsonObject.get("friends_count").toString());
         int follower = Integer.parseInt(jsonObject.get("followers_count").toString());
         int weibocnt = Integer.parseInt(jsonObject.get("statuses_count").toString());
         SinaUser sinaUser = new SinaUser(sinaUserScreenName,follow,follower,weibocnt,idstr);
-        SqlSession sqlSession = getSessionFactory().openSession();
-        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-        userMapper.findAllUserCnt();
-        try {
-            userMapper.addSinaUserFormEntity(sinaUser);
-            sqlSession.commit();
-        } finally {
-            sqlSession.close();
+        //isExist
+        if(userMapper.isExist(sinaUserScreenName) > 0){
+            try {
+                userMapper.updateSinaUser(sinaUser);
+                sqlSession.commit();
+            } finally {
+                sqlSession.close();
+            }
+        }else{
+            //userMapper.findAllUserCnt();
+            try {
+                userMapper.addSinaUserFormEntity(sinaUser);
+                sqlSession.commit();
+            } finally {
+                sqlSession.close();
+            }
         }
+
 
 
     }

@@ -14,5 +14,7 @@ public interface UserMapper {
     public int addSinaUserFormEntity(SinaUser sinaUser);
     public int deleteOneUser(int userId);
     public int findAllUserCnt();
+    public int isExist(String useName);
+    public int updateSinaUser(SinaUser sinaUser);
 
 }
