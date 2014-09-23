@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.abcve.weiboSpider.dao.SinaWeiboMapper">
+    <select id="findWeiboById" parameterType="HashMap" resultType="SinaWeiboMapper">
+        select * from weiboSpider.sinaWeibo  where weiboid=#{weiboid}
+    </select>
+
+    <!-- 为了返回list 类型而定义的returnMap -->
+    <resultMap type="SinaWeiboMapper" id="resultListSinaWeibo">
+        <id column="weiboid" property="weiboid" />
+        <result column="userid" property="userid" />
+        <result column="weiboContent" property="weiboContent"/>
+        <result column="likes" property="likes"/>
+        <result column="repost" property="repost"/>
+        <result column="comment" property="comment"/>
+        <result column="created_at" property="createTime"/>
+    </resultMap>
+
+    <select id="findWeiboByPageIndex" resultMap="resultListSinaWeibo" parameterType="int">
+        select * from weiboSpider.sinaWeibo where create_at &lt;=
+        (select userid from weiboSpider.sinaWeibo order by create_at desc limit #{0}, 1) order by create_at desc limit 10;
+    </select>
+
+
+    <select id="findAllWeiboCnt" resultType="int">
+        select count(0) from weiboSpider.sinaWeibo
+    </select>
+
+
+    <insert id="addSinaWeiboFormEntity" parameterType="SinaWeibo" keyProperty="userid">
+        insert into weiboSpider.sinaWeibo()
+        values(#{weiboid},#{userid},#{weiboContent},#{likes},#{repost},#{comment},#{created_at})
+    </insert>
+
+    <select id="isExist" parameterType="String" resultType="int">
+        select COUNT(*) from weiboSpider.sinaWeibo where weiboid = #{weiboid};
+    </select>
+    <update id='updateSinaWeibo' parameterType='SinaWeibo'>
+        UPDATE weiboSpider.sinaWeibo
+        SET likes= #{likes},repost = #{repost},comment = #{comment} WHERE weiboid = #{weiboid}
+    </update>
+
+    <delete id="deleteOneSinaWeibo" parameterType="int">
+        delete from weiboSpider.sinaWeibo where weiboid = #{weiboid}
+    </delete>
+</mapper>

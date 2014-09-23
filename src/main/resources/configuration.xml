@@ -6,6 +6,7 @@
     <typeAliases>
         <!--Entity  SinaUser -->
         <typeAlias type="com.abcve.weiboSpider.Entity.SinaUser" alias="SinaUser" />
+        <typeAlias type="com.abcve.weiboSpider.Entity.SinaWeibo" alias="SinaWeibo" />
     </typeAliases>
     <!-- mysql source -->
     <environments default="development">
@@ -21,7 +22,8 @@
         </environment>
     </environments>
     <mappers>
-        <!--userMapper.xml装载进来  同等于把“dao”的实现装载进来 -->
+        <!-- mapper the xml  -->
         <mapper resource="mybatis/userMapper.xml" />
+        <mapper resource="mybatis/SinaWeiboMapper.xml" />
     </mappers>
 </configuration>

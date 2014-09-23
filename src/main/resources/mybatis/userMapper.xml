@@ -55,7 +55,6 @@
         SET follow= #{follow},follower = #{follower},weibocnt = #{weibocnt} WHERE username = #{userName}
     </update>
 
-
     <delete id="deleteOneUser" parameterType="int">
         delete from weiboSpider.sinaUser where userid = #{userId}
     </delete>
