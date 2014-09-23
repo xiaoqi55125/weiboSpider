@@ -115,8 +115,7 @@ function addSinaUserInfoToDatabase(){
     })
 }
 function delUserFromList(name, id){
-    var agree=confirm("确认删除"+name+"吗?");
-    alert(id);
+    var agree=confirm("确认删除 "+name+" 吗?");
     if (agree)
         $.ajax({
             url:'/home',
