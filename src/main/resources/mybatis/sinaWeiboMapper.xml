@@ -3,12 +3,12 @@
         "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.abcve.weiboSpider.dao.SinaWeiboMapper">
-    <select id="findWeiboById" parameterType="HashMap" resultType="SinaWeiboMapper">
+    <select id="findWeiboById" parameterType="HashMap" resultType="SinaWeibo">
         select * from weiboSpider.sinaWeibo  where weiboid=#{weiboid}
     </select>
 
     <!-- 为了返回list 类型而定义的returnMap -->
-    <resultMap type="SinaWeiboMapper" id="resultListSinaWeibo">
+    <resultMap type="SinaWeibo" id="resultListSinaWeibo">
         <id column="weiboid" property="weiboid" />
         <result column="userid" property="userid" />
         <result column="weiboContent" property="weiboContent"/>

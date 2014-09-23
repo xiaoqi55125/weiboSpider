@@ -1,6 +1,5 @@
 package com.abcve.weiboSpider.dao;
 
-import com.abcve.weiboSpider.Entity.SinaUser;
 import com.abcve.weiboSpider.Entity.SinaWeibo;
 
 import java.util.List;
