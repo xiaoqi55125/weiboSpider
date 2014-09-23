@@ -1,6 +1,7 @@
 package com.abcve.weiboSpider.servlet;
 
 import com.abcve.weiboSpider.Entity.SinaUser;
+import com.abcve.weiboSpider.dao.SinaWeiboMapper;
 import com.abcve.weiboSpider.dao.UserMapper;
 import com.abcve.weiboSpider.util.HttpUtility;
 import com.google.gson.Gson;
@@ -35,8 +36,7 @@ public class Maintain extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.index(req, resp);
-
-        //testMybatis() ;
+        testMybatis() ;
         req.getRequestDispatcher("/WEB-INF/page/layout.jsp").forward(req, resp);
         //super.doGet(req, resp);
     }
@@ -65,7 +65,7 @@ public class Maintain extends HttpServlet {
     }
 
     /**
-     * deal the first get request
+     * 初始化页面
      * @param req HttpServletRequest
      * @param resp HttpServletResponse
      * @throws ServletException
@@ -78,22 +78,26 @@ public class Maintain extends HttpServlet {
         req.setAttribute("mainContainer", "/WEB-INF/page/weibo/weibo.jsp");
         getAllSinaUser(resp,1);
     }
-    //only for test
+
+    /**
+     * 测试方法,生产环境移除
+     */
     protected void testMybatis() {
         SqlSession sqlSession = getSessionFactory().openSession();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-        SinaUser user = userMapper.findUserById("1");
-        List<SinaUser> sinaUsers = userMapper.findUserByPageIndex(1);
-        System.out.println("--->"+user.getUserName());
-        logger.info(user.getUserName());
-        for(SinaUser sinaUser:sinaUsers){
-            System.out.println(sinaUser.getUserid()+":"+sinaUser.getUserName());
-        }
-        int isAdd = userMapper.addSinaUser("不知道6");
-        logger.info(isAdd+"<------------1就是插入成功");
+        SinaWeiboMapper sinaWeiboMapper = sqlSession.getMapper(SinaWeiboMapper.class);
+        //update sinceid
+        userMapper.updateSinaUserSinceId("123","2656912373");
+
+
         sqlSession.commit();
     }
 
+    /**
+     * 处理页面加载完成,ajax获取所有用户
+     * @param resp
+     * @param pageIndex
+     */
     protected void getAllSinaUser(HttpServletResponse resp,int pageIndex){
         SqlSession sqlSession = getSessionFactory().openSession();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
@@ -111,6 +115,11 @@ public class Maintain extends HttpServlet {
         }
 
     }
+
+    /**
+     * sql SqlSessionFactory
+     * @return SqlSessionFactory
+     */
     private static SqlSessionFactory getSessionFactory() {
         SqlSessionFactory sessionFactory = null;
 
@@ -119,18 +128,21 @@ public class Maintain extends HttpServlet {
             sessionFactory = new SqlSessionFactoryBuilder().build(Resources
                     .getResourceAsReader(resource));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return sessionFactory;
     }
 
+    /**
+     * 将返回的json对象输送到前端
+     * @param resp
+     * @param data
+     */
     protected void responseJsonData(HttpServletResponse resp , String data){
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json");
         try {
             resp.getWriter().print(data);
-            logger.info("###");
             logger.info(data);
         }catch(Exception e){
             String error = generateErrorJSONStr(e.getMessage());
@@ -142,24 +154,19 @@ public class Maintain extends HttpServlet {
         }
     }
 
-    protected String generateErrorJSONStr(String errorMsgStr) {
-        return "{\"Result\":\"ERROR\",\"Message\":\"" + errorMsgStr + "\"}";
-    }
-    protected String generateListSuccessJSONStr(String recordsJsonStr, int total,int  pageIndex) {
-        return "{\"Result\":\"OK\",\"Records\":" + recordsJsonStr +
-                ",\"pagingInfo\":"+
-                "{\"total\":"+total+",\"pageIndex\":"+pageIndex+
-                "}"+
-                "}";
-    }
 
+    /**
+     * 插入一个用户,同时插入其除了sinceid的值
+     * @param req
+     * @param resp
+     * @throws IOException
+     */
     protected void insertUserInfoFromScreenName(HttpServletRequest req,HttpServletResponse resp) throws IOException {
         //HttpRequestProxy
         req.setCharacterEncoding("UTF-8");
         String sinaUserScreenName = req.getParameter("sinaUserScreenName");
         SqlSession sqlSession = getSessionFactory().openSession();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-        //HttpUtility.sendGetRequest("http://api.weibo.com/2/users/show.json?source=211160679&screen_name="+URLEncoder.encode(sinaUserScreenName, "utf-8"));
         String url = "http://api.weibo.com/2/users/show.json?source=211160679&screen_name="+URLEncoder.encode(sinaUserScreenName, "utf-8");
         HttpUtility.sendGetRequest(url);
         String apiResult =HttpUtility.readSingleLineRespone();
@@ -189,6 +196,12 @@ public class Maintain extends HttpServlet {
             }
         }
     }
+
+    /**
+     * 从数据库中删除用户
+     * @param req
+     * @param resp
+     */
     protected void delUser(HttpServletRequest req,HttpServletResponse resp){
         String userId = req.getParameter("userid");
         SqlSession sqlSession = getSessionFactory().openSession();
@@ -201,6 +214,12 @@ public class Maintain extends HttpServlet {
         }
     }
 
+    /**
+     * 更新用户信息
+     * @param req
+     * @param resp
+     * @throws IOException
+     */
     protected void updateAllSinaUser(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         SqlSession sqlSession = getSessionFactory().openSession();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
@@ -232,4 +251,14 @@ public class Maintain extends HttpServlet {
     //http://api.weibo.com/2/statuses/timeline_batch.json?source=211160679&screen_names=黄健翔,一个汉字两个字节,海信手机官方微博
     //get user info
    // http://api.weibo.com/2/users/show.json?source=211160679&screen_name=一个汉字两个字节
+    protected String generateErrorJSONStr(String errorMsgStr) {
+        return "{\"Result\":\"ERROR\",\"Message\":\"" + errorMsgStr + "\"}";
+    }
+    protected String generateListSuccessJSONStr(String recordsJsonStr, int total,int  pageIndex) {
+        return "{\"Result\":\"OK\",\"Records\":" + recordsJsonStr +
+                ",\"pagingInfo\":"+
+                "{\"total\":"+total+",\"pageIndex\":"+pageIndex+
+                "}"+
+                "}";
+    }
 }

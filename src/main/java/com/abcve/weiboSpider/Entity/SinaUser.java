@@ -10,6 +10,23 @@ public class SinaUser {
     private int follower;
     private int weibocnt;
     private String realid;
+    private String sinceid;
+
+    public int getUserid() {
+        return userid;
+    }
+
+    public void setUserid(int userid) {
+        this.userid = userid;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public int getFollow() {
         return follow;
@@ -43,24 +60,13 @@ public class SinaUser {
         this.realid = realid;
     }
 
-
-
-    public String getUserName() {
-        return userName;
+    public String getSinceid() {
+        return sinceid;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setSinceid(String sinceid) {
+        this.sinceid = sinceid;
     }
-
-    public int getUserid() {
-        return userid;
-    }
-
-    public void setUserid(int userid) {
-        this.userid = userid;
-    }
-
     public SinaUser(String userName, int follow, int follower, int weibocnt, String realid) {
         this.userName = userName;
         this.follow = follow;
@@ -68,6 +74,19 @@ public class SinaUser {
         this.weibocnt = weibocnt;
         this.realid = realid;
     }
+
+    public SinaUser(int userid, String userName, int follow, int follower, int weibocnt, String realid, String sinceid) {
+        this.userid = userid;
+        this.userName = userName;
+        this.follow = follow;
+        this.follower = follower;
+        this.weibocnt = weibocnt;
+        this.realid = realid;
+        this.sinceid = sinceid;
+    }
+
+
+
     public SinaUser(){
 
     }
