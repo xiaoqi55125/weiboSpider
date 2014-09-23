@@ -86,6 +86,21 @@ function addWeiboUserByScreenName(){
     });
 }
 function addSinaUserInfoToDatabase(){
-    $("#sinaUserScreenName").val();
+    $.ajax({
+        url:'/home',
+        type:'POST',
+        data:{
+            'action':'insertSinaUser',
+            'sinaUserScreenName':$("#sinaUserScreenName").val()
+        },
+        success:function(data){
+            console.log("插入成功~~");
+            closeDialog();
+            getSinaUserByPageIndex(0);
+        },
+        error:function() {
+        console.log('(((((((((((((99');
+         }
+    })
 }
 

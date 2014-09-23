@@ -30,9 +30,9 @@
                 <tr bgcolor="#f8f8f8">
                     <th width="20%"  scope="col"><div align="center">微博名称</div></th>
                     <th width="20%" scope="col"><div align="center">微博隐藏ID</div></th>
-                    <th width="10%" scope="col"><div align="center">微博总数</div></th>
                     <th width="10%"  scope="col"><div align="center">关注人数</div></th>
                     <th width="10%" scope="col"><div align="center">粉丝人数</div></th>
+                    <th width="10%" scope="col"><div align="center">微博总数</div></th>
                     <th width="20%" scope="col"><div align="center">操作</div> </th>
                 </tr>
                 </thead>

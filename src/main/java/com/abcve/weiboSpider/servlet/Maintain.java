@@ -149,21 +149,34 @@ public class Maintain extends HttpServlet {
 
     protected void insertUserInfoFromScreenName(HttpServletRequest req,HttpServletResponse resp) throws IOException {
         //HttpRequestProxy
+        req.setCharacterEncoding("UTF-8");
         String sinaUserScreenName = req.getParameter("sinaUserScreenName");
-        sinaUserScreenName = "一个汉字两个字节";
+        //sinaUserScreenName = "一个汉字两个字节";
         //HttpURLConnection apiResult ;
         Map<String,String> map = new HashMap<>();
-        map.put("source","211160679");
-        map.put("screen_name",sinaUserScreenName);
-        HttpUtility.sendGetRequest("http://api.weibo.com/2/users/show.json?source=211160679&screen_name="+URLEncoder.encode("一个汉字两个字节", "utf-8"));
+//        map.put("source","211160679");
+//        map.put("screen_name",sinaUserScreenName);
+        //HttpUtility.sendGetRequest("http://api.weibo.com/2/users/show.json?source=211160679&screen_name="+URLEncoder.encode(sinaUserScreenName, "utf-8"));
+        String url = "http://api.weibo.com/2/users/show.json?source=211160679&screen_name="+URLEncoder.encode(sinaUserScreenName, "utf-8");
+        HttpUtility.sendGetRequest(url);
         String apiResult =HttpUtility.readSingleLineRespone();
         JsonParser jsonParser = new JsonParser();
         JsonObject jsonObject = (JsonObject) jsonParser.parse(apiResult);
          logger.info(apiResult);
-        String idstr = jsonObject.get("idstr").toString();
+        String idstr = jsonObject.get("id").toString();
         int follow = Integer.parseInt(jsonObject.get("friends_count").toString());
         int follower = Integer.parseInt(jsonObject.get("followers_count").toString());
         int weibocnt = Integer.parseInt(jsonObject.get("statuses_count").toString());
+        SinaUser sinaUser = new SinaUser(sinaUserScreenName,follow,follower,weibocnt,idstr);
+        SqlSession sqlSession = getSessionFactory().openSession();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        userMapper.findAllUserCnt();
+        try {
+            userMapper.addSinaUserFormEntity(sinaUser);
+            sqlSession.commit();
+        } finally {
+            sqlSession.close();
+        }
 
 
     }

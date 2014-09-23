@@ -21,8 +21,10 @@
 
 
     <select id="findUserByPageIndex" resultMap="resultListSinaUser" parameterType="int">
-     select * from weiboSpider.sinaUser where userid >=
-    (select userid from weiboSpider.sinaUser order by userid limit #{0}, 1) limit 10;
+     <!--select * from weiboSpider.sinaUser where userid <=-->
+    <!--(select userid from weiboSpider.sinaUser order by userid desc limit #{0}, 1) limit 10;-->
+    select * from weiboSpider.sinaUser where userid &lt;=
+    (select userid from weiboSpider.sinaUser order by userid desc limit #{0}, 1) order by userid desc limit 10;
     </select>
 
     <select id="findAllUserCnt" resultType="int">
@@ -35,9 +37,9 @@
         values(#{userName})
     </insert>
 
-    <insert id="addSinaUserFormEntity" parameterMap="SinaUser" useGeneratedKeys="true" keyProperty="userid">
+    <insert id="addSinaUserFormEntity" parameterType="SinaUser" useGeneratedKeys="true" keyProperty="userid">
         insert into weiboSpider.sinaUser(username,realid,follow,follower,weibocnt)
-        values(#(userName),#(realid),#{follow},#{follower},#{weibocnt})
+        values(#{userName},#{realid},#{follow},#{follower},#{weibocnt})
 
     </insert>
 

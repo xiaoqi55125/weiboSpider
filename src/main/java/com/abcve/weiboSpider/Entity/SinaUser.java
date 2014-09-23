@@ -61,6 +61,14 @@ public class SinaUser {
         this.userid = userid;
     }
 
+    public SinaUser(String userName, int follow, int follower, int weibocnt, String realid) {
+        this.userName = userName;
+        this.follow = follow;
+        this.follower = follower;
+        this.weibocnt = weibocnt;
+        this.realid = realid;
+    }
+    public SinaUser(){
 
-
+    }
 }
