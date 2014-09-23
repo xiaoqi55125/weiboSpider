@@ -34,6 +34,7 @@
                     <th width="10%" scope="col"><div align="center">粉丝人数</div></th>
                     <th width="10%" scope="col"><div align="center">微博总数</div></th>
                     <th width="20%" scope="col"><div align="center">操作</div> </th>
+                    <th width="10%" scope="col"><div align="center">删除</div> </th>
                 </tr>
                 </thead>
                 <tbody id='sinaUserListView'>
@@ -41,6 +42,7 @@
             </table>
 
             <div class="fanye">
+                <div style="float: left"><a href="javascript:updateAllSinaUser()">更新所有用户基本信息</a> </div>
                 <div id='paginator_div' style="float:right;padding-top: 15px;" ></div>
             </div>
         </div>

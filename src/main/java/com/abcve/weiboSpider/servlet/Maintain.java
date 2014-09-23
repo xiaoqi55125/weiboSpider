@@ -51,6 +51,13 @@ public class Maintain extends HttpServlet {
                 break;
             case "insertSinaUser":
                 this.insertUserInfoFromScreenName(req,resp);
+                break;
+            case "delUser":
+                this.delUser(req,resp);
+                break;
+            case "updateAllSinaUser":
+                this.updateAllSinaUser(req,resp);
+                break;
 
         }
 
@@ -181,9 +188,43 @@ public class Maintain extends HttpServlet {
                 sqlSession.close();
             }
         }
+    }
+    protected void delUser(HttpServletRequest req,HttpServletResponse resp){
+        String userId = req.getParameter("userid");
+        SqlSession sqlSession = getSessionFactory().openSession();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        try {
+            userMapper.deleteOneUser(Integer.parseInt(userId));
+            sqlSession.commit();
+        } finally {
+            sqlSession.close();
+        }
+    }
 
+    protected void updateAllSinaUser(HttpServletRequest req, HttpServletResponse resp) throws IOException{
+        SqlSession sqlSession = getSessionFactory().openSession();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        try{
+            List<SinaUser> sinaUsers = userMapper.findAllSinaUser();
+            for(SinaUser sinaUser:sinaUsers) {
+                //userMapper.updateSinaUser(sinaUser);
+                String url = "http://api.weibo.com/2/users/show.json?source=211160679&screen_name="+URLEncoder.encode(sinaUser.getUserName(), "utf-8");
+                HttpUtility.sendGetRequest(url);
+                String apiResult =HttpUtility.readSingleLineRespone();
+                JsonParser jsonParser = new JsonParser();
+                JsonObject jsonObject = (JsonObject) jsonParser.parse(apiResult);
+                String idstr = jsonObject.get("id").toString();
+                int follow = Integer.parseInt(jsonObject.get("friends_count").toString());
+                int follower = Integer.parseInt(jsonObject.get("followers_count").toString());
+                int weibocnt = Integer.parseInt(jsonObject.get("statuses_count").toString());
+                SinaUser sinaUser2 = new SinaUser(sinaUser.getUserName(),follow,follower,weibocnt,idstr);
+                userMapper.updateSinaUser(sinaUser2);
+                sqlSession.commit();
+            }
 
-
+        }finally {
+            sqlSession.close();
+        }
     }
 
     //apis

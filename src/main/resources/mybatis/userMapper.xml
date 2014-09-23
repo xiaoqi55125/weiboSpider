@@ -27,6 +27,10 @@
     (select userid from weiboSpider.sinaUser order by userid desc limit #{0}, 1) order by userid desc limit 10;
     </select>
 
+    <select id="findAllSinaUser" resultMap="resultListSinaUser">
+        select * from weiboSpider.sinaUser ;
+    </select>
+
     <select id="findAllUserCnt" resultType="int">
         select count(0) from weiboSpider.sinaUser
     </select>

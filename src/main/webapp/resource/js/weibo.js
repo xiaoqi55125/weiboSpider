@@ -10,6 +10,11 @@ var weiboCont = {
         return function () {
             addWeiboToRight(name);
         }
+    },
+    delUserFromList: function(name, id){
+        return function(){
+            delUserFromList(name, id);
+        }
     }
 };
 function getSinaUserByPageIndex(pageIndex){
@@ -37,8 +42,13 @@ function renderDataToTable(data){
             var wFollow = weiboCont.cell(entity.follow);
             var wFollower = weiboCont.cell(entity.follower);
             var wWeibocnt = weiboCont.cell(entity.weibocnt);
-            var wCont = weiboCont.cell($("<a href='javascript:void(0);'>添加到右侧</a>"));
-            wCont.click(weiboCont.addWeiboToRight(entity.userName));
+            var $addToRight = $("<a href='javascript:void(0);'>添加到右侧</a>");
+            var $delUser = $("<a href='javascript:void(0);'>删除用户</a>");
+            $addToRight.click(weiboCont.addWeiboToRight(entity.userName));
+            $delUser.click(weiboCont.delUserFromList(entity.userName,entity.userid));
+            var wCont = weiboCont.cell($addToRight);
+            var wDel = weiboCont.cell($delUser);
+            //wCont.click(weiboCont.addWeiboToRight(entity.userName));
             var row = weiboCont.row();
             row.append(wName);
             row.append(wUserId);
@@ -46,6 +56,7 @@ function renderDataToTable(data){
             row.append(wFollower);
             row.append(wWeibocnt);
             row.append(wCont);
+            row.append(wDel);
             $("#sinaUserListView").append(row);
         });
         var pageInfo = data.pagingInfo;
@@ -99,8 +110,42 @@ function addSinaUserInfoToDatabase(){
             getSinaUserByPageIndex(0);
         },
         error:function() {
-        console.log('(((((((((((((99');
+        console.log('error');
          }
+    })
+}
+function delUserFromList(name, id){
+    var agree=confirm("确认删除"+name+"吗?");
+    alert(id);
+    if (agree)
+        $.ajax({
+            url:'/home',
+            type:"POST",
+            data:{
+                'action':'delUser',
+                'userid':id},
+            success:function(){
+                getSinaUserByPageIndex(0);
+            },
+            error:function(){
+                console.log('err');
+            }
+        })
+}
+
+function updateAllSinaUser(){
+    $.ajax({
+        url:'/home',
+        type:"POST",
+        data:{
+            'action':'updateAllSinaUser'},
+        success:function(){
+            alert("succ");
+            getSinaUserByPageIndex(0);
+        },
+        error:function(){
+            console.log('err');
+        }
     })
 }
 
