@@ -88,7 +88,8 @@ public class Maintain extends HttpServlet {
         SinaWeiboMapper sinaWeiboMapper = sqlSession.getMapper(SinaWeiboMapper.class);
         //update sinceid ,
         //userMapper.updateSinaUserSinceId("123","2656912373");
-
+        //findAllWeiboCnt
+        logger.info("____________________________________findAllWeiboCnt=>"+sinaWeiboMapper.findAllWeiboCnt());
 
         sqlSession.commit();
     }
