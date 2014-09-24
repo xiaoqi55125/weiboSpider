@@ -86,8 +86,8 @@ public class Maintain extends HttpServlet {
         SqlSession sqlSession = getSessionFactory().openSession();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         SinaWeiboMapper sinaWeiboMapper = sqlSession.getMapper(SinaWeiboMapper.class);
-        //update sinceid
-        userMapper.updateSinaUserSinceId("123","2656912373");
+        //update sinceid ,
+        //userMapper.updateSinaUserSinceId("123","2656912373");
 
 
         sqlSession.commit();
