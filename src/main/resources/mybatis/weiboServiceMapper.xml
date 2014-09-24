@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.abcve.weiboSpider.dao.WeiboServiceMapper">
+
+    <select id="getCompleteUser" parameterType="HashMap" resultType="WeiboService">
+        select * from weiboSpider.weiboSeivice  where oneid=#{oneId}
+    </select>
+
+    <update id='updateWeiboSeivice' parameterType='WeiboService'>
+        UPDATE weiboSpider.weiboSeivice
+        SET completeuser= CONCAT(completeuser,",", #{completeUser} } ) WHERE oneid = #{oneId}
+    </update>
+
+    <update id='updateWeiboSeiviceToNull' parameterType="String">
+        UPDATE weiboSpider.weiboSeivice
+        SET completeuser= ""  WHERE oneid = #{0}
+    </update>
+
+
+</mapper>

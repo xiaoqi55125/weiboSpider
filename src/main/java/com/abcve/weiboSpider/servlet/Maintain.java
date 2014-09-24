@@ -247,10 +247,10 @@ public class Maintain extends HttpServlet {
                 int weibocnt = Integer.parseInt(jsonObject.get("statuses_count").toString());
                 SinaUser sinaUser2 = new SinaUser(sinaUser.getUserName(),follow,follower,weibocnt,idstr);
                 userMapper.updateSinaUser(sinaUser2);
-                sqlSession.commit();
             }
 
         }finally {
+            sqlSession.commit();
             sqlSession.close();
         }
     }
@@ -274,29 +274,29 @@ public class Maintain extends HttpServlet {
 //                dealSinaWeiboData(1, userNames[i]);
 //            }
 //        }
-//        CountDownLatch begin = new CountDownLatch(1);
-//        //对于整个比赛，所有运动员结束后才算结束
-//        CountDownLatch end = new CountDownLatch(userNames.length);
-//        WeiboService[] weiboServices = new WeiboService[userNames.length];
-//
-//        for(int ii=0;ii<userNames.length;ii++)
-//            weiboServices[ii] = new WeiboService(userNames[ii],begin,end);
-//
-//        //设置特定的线程池，大小为5
-//        ExecutorService exe = Executors.newFixedThreadPool(userNames.length);
-//        for(WeiboService weiboService:weiboServices)
-//            exe.execute(weiboService);            //分配线程
-//        System.out.println("Race begins!");
-//        begin.countDown();
-//        try{
-//            end.await();            //等待end状态变为0，即为结束
-//        }catch (InterruptedException e) {
-//            // TODO: handle exception
-//            e.printStackTrace();
-//        }finally{
-//            System.out.println("Race ends!");
-//        }
-//        exe.shutdown();
+        CountDownLatch begin = new CountDownLatch(1);
+        //对于整个比赛，所有运动员结束后才算结束
+        CountDownLatch end = new CountDownLatch(userNames.length);
+        WeiboService[] weiboServices = new WeiboService[userNames.length];
+
+        for(int ii=0;ii<userNames.length;ii++)
+            weiboServices[ii] = new WeiboService(userNames[ii],begin,end);
+
+        //设置特定的线程池，大小为5
+        ExecutorService exe = Executors.newFixedThreadPool(userNames.length);
+        for(WeiboService weiboService:weiboServices)
+            exe.execute(weiboService);            //分配线程
+        System.out.println("Race begins!");
+        begin.countDown();
+        try{
+            end.await();            //等待end状态变为0，即为结束
+        }catch (InterruptedException e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }finally{
+            System.out.println("Race ends!");
+        }
+        exe.shutdown();
     }
 
 

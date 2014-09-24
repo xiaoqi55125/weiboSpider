@@ -2,6 +2,7 @@ package com.abcve.weiboSpider.service;
 
 import com.abcve.weiboSpider.Entity.SinaWeibo;
 import com.abcve.weiboSpider.dao.SinaWeiboMapper;
+import com.abcve.weiboSpider.dao.WeiboServiceMapper;
 import com.abcve.weiboSpider.util.HttpUtility;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -40,6 +41,7 @@ public class WeiboService implements Runnable  {
 
             if (userName.length()>0){
                 try {
+                    clearCompleteData();
                     dealSinaWeiboData(1, userName);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -54,8 +56,8 @@ public class WeiboService implements Runnable  {
         }
     }
 
-    public static void dealSinaWeiboData (int page,String userName)throws IOException{
-        String url = "http://api.weibo.com/2/statuses/user_timeline.json?source=211160679&screen_name="+ URLEncoder.encode(userName, "utf-8")+"&count=1&page="+page;
+    public  void dealSinaWeiboData (int page,String userName)throws IOException{
+        String url = "http://api.weibo.com/2/statuses/user_timeline.json?source=211160679&screen_name="+ URLEncoder.encode(userName, "utf-8")+"&count=100&page="+page;
         HttpUtility.sendGetRequest(url);
         String apiResult = HttpUtility.readSingleLineRespone();
         JsonParser jsonParser = new JsonParser();
@@ -82,28 +84,39 @@ public class WeiboService implements Runnable  {
      * 根据微博对象插入微博
      * @param sinaWeibo
      */
-    public static void insertSinaWeibo(SinaWeibo sinaWeibo) throws UnsupportedEncodingException {
-        //http://api.weibo.com/2/statuses/user_timeline.json?source=211160679&screen_name=赵本山&count=20
+    public  void insertSinaWeibo(SinaWeibo sinaWeibo) throws UnsupportedEncodingException {
         SqlSession sqlSession = getSessionFactory().openSession();
         SinaWeiboMapper sinaWeiboMapper = sqlSession.getMapper(SinaWeiboMapper.class);
         try {
             //判断是否存在
-            if (sinaWeiboMapper.isExist(sinaWeibo.getWeiboid())<1){
+            if (sinaWeiboMapper.isExist(sinaWeibo.getWeiboid() )< 1){
                 sinaWeiboMapper.addSinaWeiboFormEntity(sinaWeibo);
             }
-            sqlSession.commit();
-
         }catch (Exception ue){
+            //有的手机用户发的微博包含手机自带表情,新浪微博使用4个字节存的,需处理
             String a = new String(sinaWeibo.getWeiboContent().getBytes("ISO-8859-1"), "utf-8");
             sinaWeibo.setWeiboContent(a);
             if (sinaWeiboMapper.isExist(sinaWeibo.getWeiboid())<1){
                 sinaWeiboMapper.addSinaWeiboFormEntity(sinaWeibo);
             }
+        }finally {
             sqlSession.commit();
+            sqlSession.close();
+        }
+    }
+
+    public void clearCompleteData(){
+        SqlSession sqlSession = getSessionFactory().openSession();
+        WeiboServiceMapper weiboServiceMapper = sqlSession.getMapper(WeiboServiceMapper.class);
+        try {
+            weiboServiceMapper.updateWeiboSeiviceToNull("101");
+        }catch (Exception e){
+
         }finally {
             sqlSession.close();
         }
     }
+
 
     /**
      * sql SqlSessionFactory
