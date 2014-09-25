@@ -10,14 +10,14 @@ public class SinaWeibo {
 
     }
     private String weiboid;
-    private int userid;
+    private String userid;
     private String weiboContent;
     private int likes;
     private int repost;
     private int comment;
-    private Date createTime;
+    private String createTime;
 
-    public SinaWeibo(String weiboid, int userid, String weiboContent, int likes, int repost, int comment, Date createTime) {
+    public SinaWeibo(String weiboid, String userid, String weiboContent, int likes, int repost, int comment, String createTime) {
         this.weiboid = weiboid;
         this.userid = userid;
         this.weiboContent = weiboContent;
@@ -35,11 +35,11 @@ public class SinaWeibo {
         this.weiboid = weiboid;
     }
 
-    public int getUserid() {
+    public String getUserid() {
         return userid;
     }
 
-    public void setUserid(int userid) {
+    public void setUserid(String userid) {
         this.userid = userid;
     }
 
@@ -75,11 +75,11 @@ public class SinaWeibo {
         this.comment = comment;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 }

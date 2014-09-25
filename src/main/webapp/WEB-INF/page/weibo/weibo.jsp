@@ -49,6 +49,7 @@
     </div>
     <div class="rightPanel">
         <textarea id="train_target" name="train_target" class="field textarea small" spellcheck="true" rows="10" cols="50" tabindex="9" onkeyup=""></textarea>
+        <input type="button" id="insertWeiboByScreenNames" onclick="insertWeiboByScreenNames()" value="确认抓取">
     </div>
 </div>
 </body>

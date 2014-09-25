@@ -29,9 +29,9 @@
     </select>
 
 
-    <insert id="addSinaWeiboFormEntity" parameterType="SinaWeibo" keyProperty="userid">
+    <insert id="addSinaWeiboFormEntity" parameterType="SinaWeibo" keyProperty="weiboid">
         insert into weiboSpider.sinaWeibo()
-        values(#{weiboid},#{userid},#{weiboContent},#{likes},#{repost},#{comment},#{created_at})
+        values(#{weiboid},#{userid},#{weiboContent},#{likes},#{repost},#{comment},#{createTime})
     </insert>
 
     <select id="isExist" parameterType="String" resultType="int">

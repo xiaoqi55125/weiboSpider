@@ -1,13 +1,13 @@
 package com.abcve.weiboSpider.servlet;
 
 import com.abcve.weiboSpider.Entity.SinaUser;
+import com.abcve.weiboSpider.Entity.SinaWeibo;
 import com.abcve.weiboSpider.dao.SinaWeiboMapper;
 import com.abcve.weiboSpider.dao.UserMapper;
+import com.abcve.weiboSpider.service.WeiboService;
 import com.abcve.weiboSpider.util.HttpUtility;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import  com.google.gson.JsonParser;
+import com.google.gson.*;
+import com.google.gson.internal.bind.JsonAdapterAnnotationTypeAdapterFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.io.Resources;
@@ -20,10 +20,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by zhicheng on 14/9/19.
@@ -58,6 +62,9 @@ public class Maintain extends HttpServlet {
             case "updateAllSinaUser":
                 this.updateAllSinaUser(req,resp);
                 break;
+            case "insertWeibos":
+                this.insertSinaWeiboAction(req,resp);
+                break;
 
         }
 
@@ -88,8 +95,9 @@ public class Maintain extends HttpServlet {
         SinaWeiboMapper sinaWeiboMapper = sqlSession.getMapper(SinaWeiboMapper.class);
         //update sinceid ,
         //userMapper.updateSinaUserSinceId("123","2656912373");
-        //findAllWeiboCnt
+        //findAllWeiboCnt success
         logger.info("____________________________________findAllWeiboCnt=>"+sinaWeiboMapper.findAllWeiboCnt());
+
 
         sqlSession.commit();
     }
@@ -246,6 +254,52 @@ public class Maintain extends HttpServlet {
             sqlSession.close();
         }
     }
+
+    /**
+     * 处理页面发送的insert请求
+     * @param req
+     * @param resp
+     */
+    public void insertSinaWeiboAction(HttpServletRequest req, HttpServletResponse resp)  throws IOException {
+        SqlSession sqlSession = getSessionFactory().openSession();
+        SinaWeiboMapper sinaWeiboMapper = sqlSession.getMapper(SinaWeiboMapper.class);
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        //前端过来的是用户名批量字符串,因为官方的批量获取数量用户不得超过20,而且数据每次返回100,也没有提供分页
+        String userScreenNames = req.getParameter("screenNames");
+        String[] userNames = userScreenNames.split(",");
+//        for (int i = 0; i<userNames.length; i++){
+//            //获取每个名字
+//
+//            if (userNames[i].length()>0){
+//                dealSinaWeiboData(1, userNames[i]);
+//            }
+//        }
+//        CountDownLatch begin = new CountDownLatch(1);
+//        //对于整个比赛，所有运动员结束后才算结束
+//        CountDownLatch end = new CountDownLatch(userNames.length);
+//        WeiboService[] weiboServices = new WeiboService[userNames.length];
+//
+//        for(int ii=0;ii<userNames.length;ii++)
+//            weiboServices[ii] = new WeiboService(userNames[ii],begin,end);
+//
+//        //设置特定的线程池，大小为5
+//        ExecutorService exe = Executors.newFixedThreadPool(userNames.length);
+//        for(WeiboService weiboService:weiboServices)
+//            exe.execute(weiboService);            //分配线程
+//        System.out.println("Race begins!");
+//        begin.countDown();
+//        try{
+//            end.await();            //等待end状态变为0，即为结束
+//        }catch (InterruptedException e) {
+//            // TODO: handle exception
+//            e.printStackTrace();
+//        }finally{
+//            System.out.println("Race ends!");
+//        }
+//        exe.shutdown();
+    }
+
+
 
     //apis
     //get weibo info

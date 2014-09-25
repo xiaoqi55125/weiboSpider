@@ -148,3 +148,20 @@ function updateAllSinaUser(){
     })
 }
 
+function insertWeiboByScreenNames(){
+    $.ajax({
+        url:'/home',
+        type:"post",
+        data:{
+            'action':'insertWeibos',
+            'screenNames':$('#train_target').val()
+        },
+        success:function(){
+            alert("s");
+        },
+        error:function(){
+            alert("X");
+        }
+    })
+}
+
