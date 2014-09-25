@@ -4,6 +4,7 @@ import com.abcve.weiboSpider.Entity.SinaUser;
 import com.abcve.weiboSpider.Entity.SinaWeibo;
 import com.abcve.weiboSpider.dao.SinaWeiboMapper;
 import com.abcve.weiboSpider.dao.UserMapper;
+import com.abcve.weiboSpider.dao.WeiboServiceMapper;
 import com.abcve.weiboSpider.service.WeiboService;
 import com.abcve.weiboSpider.util.HttpUtility;
 import com.google.gson.*;
@@ -54,16 +55,19 @@ public class Maintain extends HttpServlet {
                 this.getAllSinaUser(resp,Integer.parseInt(pageIndex));
                 break;
             case "insertSinaUser":
-                this.insertUserInfoFromScreenName(req,resp);
+                this.insertUserInfoFromScreenName(req, resp);
                 break;
             case "delUser":
-                this.delUser(req,resp);
+                this.delUser(req, resp);
                 break;
             case "updateAllSinaUser":
-                this.updateAllSinaUser(req,resp);
+                this.updateAllSinaUser(req, resp);
                 break;
             case "insertWeibos":
-                this.insertSinaWeiboAction(req,resp);
+                this.insertSinaWeiboAction(req, resp);
+                break;
+            case "getCompleteUsers":
+                this.getCompleteUser(resp);
                 break;
 
         }
@@ -287,6 +291,7 @@ public class Maintain extends HttpServlet {
         for(WeiboService weiboService:weiboServices)
             exe.execute(weiboService);            //分配线程
         System.out.println("Race begins!");
+        clearCompleteData();
         begin.countDown();
         try{
             end.await();            //等待end状态变为0，即为结束
@@ -297,6 +302,50 @@ public class Maintain extends HttpServlet {
             System.out.println("Race ends!");
         }
         exe.shutdown();
+        resp.getWriter().print("success");
+    }
+
+    /**
+     * 处理开始后,先清除之前的完成抓取记录
+     */
+    public void clearCompleteData(){
+        SqlSession sqlSession = getSessionFactory().openSession();
+        WeiboServiceMapper weiboServiceMapper = sqlSession.getMapper(WeiboServiceMapper.class);
+        try {
+            weiboServiceMapper.updateWeiboServiceToNull("101");
+
+        }catch (Exception e){
+
+        }finally {
+            sqlSession.commit();
+            sqlSession.close();
+        }
+    }
+
+    /**
+     * 获取已完成用户临时名称
+     * @return
+     */
+    public void getCompleteUser(HttpServletResponse response){
+        SqlSession sqlSession = getSessionFactory().openSession();
+        WeiboServiceMapper weiboServiceMapper = sqlSession.getMapper(WeiboServiceMapper.class);
+        String users ="";
+        try {
+            com.abcve.weiboSpider.Entity.WeiboService weiboService = weiboServiceMapper.getCompleteUser("101");
+            String userNames[] =  weiboService.getCompleteUser().split(",");
+            for (String userName : userNames){
+                if (userName.length() > 0){
+                    users = users+ userName +"<br>";
+                }
+            }
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/text");
+            response.getWriter().print("当前已完成:<br>"+users);
+        }catch (Exception e){
+
+        }finally {
+            sqlSession.close();
+        }
     }
 
 

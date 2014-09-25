@@ -2,6 +2,7 @@ package com.abcve.weiboSpider.service;
 
 import com.abcve.weiboSpider.Entity.SinaWeibo;
 import com.abcve.weiboSpider.dao.SinaWeiboMapper;
+import com.abcve.weiboSpider.dao.UserMapper;
 import com.abcve.weiboSpider.dao.WeiboServiceMapper;
 import com.abcve.weiboSpider.util.HttpUtility;
 import com.google.gson.JsonArray;
@@ -37,11 +38,8 @@ public class WeiboService implements Runnable  {
     public void run(){
         try{
             begin.await();        //等待begin的状态为0
-            //Thread.sleep((long)(Math.random()*100));    //随机分配时间，即运动员完成时间
-
             if (userName.length()>0){
                 try {
-                    //clearCompleteData();
                     dealSinaWeiboData(1, userName);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -58,13 +56,18 @@ public class WeiboService implements Runnable  {
     }
 
     public  void dealSinaWeiboData (int page,String userName)throws IOException{
-        String url = "http://api.weibo.com/2/statuses/user_timeline.json?source=211160679&screen_name="+ URLEncoder.encode(userName, "utf-8")+"&count=100&page="+page;
+        String sinceId = findUserSinceIdByName(userName);
+        String url = "http://api.weibo.com/2/statuses/user_timeline.json?source=211160679&screen_name="+
+                URLEncoder.encode(userName, "utf-8")+
+                "&count=100&page="+page+
+                "&since_id="+sinceId;
         HttpUtility.sendGetRequest(url);
         String apiResult = HttpUtility.readSingleLineRespone();
         JsonParser jsonParser = new JsonParser();
         JsonObject wholeJson = (JsonObject) jsonParser.parse(apiResult);
         JsonArray statusJsonArray = wholeJson.getAsJsonArray("statuses");
         for (int j = 0; j<statusJsonArray.size(); j++){
+
             JsonObject oneWeibo = (JsonObject) statusJsonArray.get(j);
             String weiboId = oneWeibo.get("id").toString();
             String userID = oneWeibo.getAsJsonObject("user").get("id").toString();
@@ -74,6 +77,10 @@ public class WeiboService implements Runnable  {
             int comment = Integer.parseInt(oneWeibo.get("comments_count").toString());
             String date = oneWeibo.get("created_at").toString();
             SinaWeibo sinaWeibo = new SinaWeibo(weiboId,userID,weiboContent,likes,repost,comment,date);
+            if(page==1 && j==0 ){
+                //更新用户最新微博id since_id
+                updateUserSinceId(weiboId,userID);
+            }
             insertSinaWeibo(sinaWeibo);
         }
         if (statusJsonArray.size()>=99){
@@ -107,22 +114,9 @@ public class WeiboService implements Runnable  {
     }
 
     /**
-     * 处理开始后,先清除之前的完成抓取记录
+     * 更新已经完成抓取的用户
+     * @param userName 用户名
      */
-    public void clearCompleteData(){
-        SqlSession sqlSession = getSessionFactory().openSession();
-        WeiboServiceMapper weiboServiceMapper = sqlSession.getMapper(WeiboServiceMapper.class);
-        try {
-            weiboServiceMapper.updateWeiboServiceToNull("101");
-
-        }catch (Exception e){
-
-        }finally {
-            sqlSession.commit();
-            sqlSession.close();
-        }
-    }
-
     public void updateCompleteData(String userName){
         SqlSession sqlSession = getSessionFactory().openSession();
         WeiboServiceMapper weiboServiceMapper = sqlSession.getMapper(WeiboServiceMapper.class);
@@ -134,6 +128,39 @@ public class WeiboService implements Runnable  {
             sqlSession.commit();
             sqlSession.close();
         }
+    }
+
+    /**
+     * 更新用户最新微博Id
+     * @param sinceid
+     * @param realid
+     */
+    public void updateUserSinceId(String sinceid, String realid){
+        //public int updateSinaUserSinceId(String sinceid,String realid);
+        SqlSession sqlSession = getSessionFactory().openSession();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        try {
+            userMapper.updateSinaUserSinceId(sinceid, realid);
+        }catch (Exception e){
+
+        }finally {
+            sqlSession.commit();
+            sqlSession.close();
+        }
+    }
+
+    public String findUserSinceIdByName(String name){
+        SqlSession sqlSession = getSessionFactory().openSession();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        String result = "";
+        try {
+            result=  userMapper.findUserSinceIdByName(name);
+        }catch (Exception e){
+
+        }finally {
+            sqlSession.close();
+        }
+        return result;
     }
 
 

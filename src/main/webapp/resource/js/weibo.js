@@ -139,7 +139,7 @@ function updateAllSinaUser(){
         data:{
             'action':'updateAllSinaUser'},
         success:function(){
-            alert("succ");
+            alert("所有用户数据更新成功!");
             getSinaUserByPageIndex(0);
         },
         error:function(){
@@ -149,6 +149,7 @@ function updateAllSinaUser(){
 }
 
 function insertWeiboByScreenNames(){
+    var getint  = setInterval(getCompleteUsers, 500);
     $.ajax({
         url:'/home',
         type:"post",
@@ -156,12 +157,41 @@ function insertWeiboByScreenNames(){
             'action':'insertWeibos',
             'screenNames':$('#train_target').val()
         },
+        beforeSend:function(){
+            $("#getAllWeiboLoading").show();
+        },
         success:function(){
-            alert("s");
+            //alert("s");
+            clearInterval(getint);
+            $("#getAllWeiboLoading").hide();
+            $.blockUI({
+                theme:true,
+                title: '提示',
+                message : $('#dialogInsertSuccess'),
+                themedCSS: {
+                    width: '200px',
+                    top: '20%'
+                },
+                onOverlayClick: $.unblockUI
+            });
         },
         error:function(){
-            alert("X");
+            alert("系统错误,请刷新页面!");
         }
     })
+}
+
+function getCompleteUsers(){
+    $.ajax({
+        url:"/home",
+        type:"POST",
+        data:{
+            'action':'getCompleteUsers'
+        },
+        success:function(data){
+            $("#processUser").html(data);
+        }
+    })
+
 }
 

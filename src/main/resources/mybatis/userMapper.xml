@@ -63,4 +63,8 @@
     <delete id="deleteOneUser" parameterType="int">
         delete from weiboSpider.sinaUser where userid = #{userId}
     </delete>
+
+    <select id="findUserSinceIdByName" parameterType="String" resultType="String">
+        select sinceid from weiboSpider.sinaUser  where userName=#{0}
+    </select>
 </mapper>

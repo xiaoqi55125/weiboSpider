@@ -48,8 +48,13 @@
         </div>
     </div>
     <div class="rightPanel">
-        <textarea id="train_target" name="train_target" class="field textarea small" spellcheck="true" rows="10" cols="50" tabindex="9" onkeyup=""></textarea>
-        <input type="button" id="insertWeiboByScreenNames" onclick="insertWeiboByScreenNames()" value="确认抓取">
+        <textarea id="train_target" name="train_target"style="margin-top: 2px;" spellcheck="true" rows="10" cols="50" tabindex="9" onkeyup=""></textarea><p/>
+        <input type="button" id="insertWeiboByScreenNames" style="background-image:url(/resource/images/button.jpg);width:200px; height:80px;" onclick="insertWeiboByScreenNames()">
+        <img id="getAllWeiboLoading" style="display: none" src="/resource/images/27.gif"/><p/>
+        <div id="processUser">
+            <p>123123</p>
+            <p>123123</p>
+        </div>
     </div>
 </div>
 </body>
@@ -59,5 +64,10 @@
             <input id="okSinaUserBtn" name="okBtn" onclick="addSinaUserInfoToDatabase()" type="button" value="添加" tabindex="2"/>
             <input type="button" id="noBtn" onclick="closeDialog()" value="取消"/>
         </div>
+</div>
+<div id="dialogInsertSuccess" style="display: none;" >
+    <div style="height: 100px;">
+        <h2>抓取任务完成!</h2>
+    </div>
 </div>
 </html>

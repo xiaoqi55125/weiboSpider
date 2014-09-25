@@ -18,4 +18,5 @@ public interface UserMapper {
     public int isExist(String useName);
     public int updateSinaUser(SinaUser sinaUser);
     public int updateSinaUserSinceId(String sinceid,String realid);
+    public String findUserSinceIdByName(String name);
 }
