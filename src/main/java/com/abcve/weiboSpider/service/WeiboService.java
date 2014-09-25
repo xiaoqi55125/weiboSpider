@@ -41,13 +41,14 @@ public class WeiboService implements Runnable  {
 
             if (userName.length()>0){
                 try {
-                    clearCompleteData();
+                    //clearCompleteData();
                     dealSinaWeiboData(1, userName);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             System.out.println("===>Play"+userName+" arrived.");
+            updateCompleteData(userName);
         }catch (InterruptedException e) {
             // TODO: handle exception
             e.printStackTrace();
@@ -105,14 +106,32 @@ public class WeiboService implements Runnable  {
         }
     }
 
+    /**
+     * 处理开始后,先清除之前的完成抓取记录
+     */
     public void clearCompleteData(){
         SqlSession sqlSession = getSessionFactory().openSession();
         WeiboServiceMapper weiboServiceMapper = sqlSession.getMapper(WeiboServiceMapper.class);
         try {
-            weiboServiceMapper.updateWeiboSeiviceToNull("101");
+            weiboServiceMapper.updateWeiboServiceToNull("101");
+
         }catch (Exception e){
 
         }finally {
+            sqlSession.commit();
+            sqlSession.close();
+        }
+    }
+
+    public void updateCompleteData(String userName){
+        SqlSession sqlSession = getSessionFactory().openSession();
+        WeiboServiceMapper weiboServiceMapper = sqlSession.getMapper(WeiboServiceMapper.class);
+        try {
+            weiboServiceMapper.updateWeiboService(userName);
+        }catch (Exception e){
+
+        }finally {
+            sqlSession.commit();
             sqlSession.close();
         }
     }

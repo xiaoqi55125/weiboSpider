@@ -5,17 +5,17 @@
 <mapper namespace="com.abcve.weiboSpider.dao.WeiboServiceMapper">
 
     <select id="getCompleteUser" parameterType="HashMap" resultType="WeiboService">
-        select * from weiboSpider.weiboSeivice  where oneid=#{oneId}
+        select * from weiboSpider.weiboService  where oneid=#{oneId};
     </select>
 
-    <update id='updateWeiboSeivice' parameterType='WeiboService'>
-        UPDATE weiboSpider.weiboSeivice
-        SET completeuser= CONCAT(completeuser,",", #{completeUser} } ) WHERE oneid = #{oneId}
+    <update id='updateWeiboService' parameterType='String'>
+        UPDATE weiboSpider.weiboService
+        SET completeuser= CONCAT(completeuser,",", #{0} } ) WHERE oneid = '101';
     </update>
 
-    <update id='updateWeiboSeiviceToNull' parameterType="String">
-        UPDATE weiboSpider.weiboSeivice
-        SET completeuser= ""  WHERE oneid = #{0}
+    <update id='updateWeiboServiceToNull' parameterType="String">
+        UPDATE weiboSpider.weiboService
+        SET completeuser= ""  WHERE oneid = #{0};
     </update>
 
 

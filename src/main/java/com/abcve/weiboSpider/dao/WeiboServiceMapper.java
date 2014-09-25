@@ -7,6 +7,6 @@ import com.abcve.weiboSpider.service.WeiboService;
  */
 public interface WeiboServiceMapper {
      public WeiboService getCompleteUser(String oneid);
-    public int updateWeiboSeivice(WeiboService weiboService);
-    public int updateWeiboSeiviceToNull(String oneId);
+    public int updateWeiboService(String userName);
+    public int updateWeiboServiceToNull(String oneId);
 }

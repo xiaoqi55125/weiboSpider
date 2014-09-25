@@ -3,8 +3,8 @@ package com.abcve.weiboSpider.Entity;
 /**
  * Created by zhicheng on 14/9/25.
  */
-public class WeiboSeivice {
-    public WeiboSeivice(){
+public class WeiboService {
+    public WeiboService(){
     }
     private int oneId;
     private String completeUser;
@@ -25,7 +25,7 @@ public class WeiboSeivice {
         this.completeUser = completeUser;
     }
 
-    public WeiboSeivice(int oneId, String completeUser) {
+    public WeiboService(int oneId, String completeUser) {
         this.oneId = oneId;
         this.completeUser = completeUser;
     }

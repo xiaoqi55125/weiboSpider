@@ -7,7 +7,7 @@
         <!--Entity  SinaUser -->
         <typeAlias type="com.abcve.weiboSpider.Entity.SinaUser" alias="SinaUser" />
         <typeAlias type="com.abcve.weiboSpider.Entity.SinaWeibo" alias="SinaWeibo" />
-        <typeAlias type="com.abcve.weiboSpider.Entity.WeiboSeivice" alias="WeiboSeivice" />
+        <typeAlias type="com.abcve.weiboSpider.Entity.WeiboService" alias="WeiboService" />
     </typeAliases>
     <!-- mysql source -->
     <environments default="development">
