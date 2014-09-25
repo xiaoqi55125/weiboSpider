@@ -44,7 +44,7 @@ function renderDataToTable(data){
             var wWeibocnt = weiboCont.cell(entity.weibocnt);
             var $addToRight = $("<a href='javascript:void(0);'>添加到右侧</a>");
             var $delUser = $("<a href='javascript:void(0);'>删除用户</a>");
-            $addToRight.click(weiboCont.addWeiboToRight(entity.userName));
+            $addToRight.on("click",weiboCont.addWeiboToRight(entity.userName));
             $delUser.click(weiboCont.delUserFromList(entity.userName,entity.userid));
             var wCont = weiboCont.cell($addToRight);
             var wDel = weiboCont.cell($delUser);
@@ -79,7 +79,7 @@ function renderDataToTable(data){
 
 //addWeiboToRight
 function addWeiboToRight(name){
-    $("#train_target").append(name+',');
+    $("#train_target").val( $("#train_target").val()+name+',');
 }
 
 function addWeiboUserByScreenName(){
