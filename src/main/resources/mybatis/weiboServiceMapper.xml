@@ -10,7 +10,7 @@
 
     <update id='updateWeiboService' parameterType='String'>
         UPDATE weiboSpider.weiboService
-        SET completeuser= CONCAT(completeuser,",", #{0} } ) WHERE oneid = '101';
+        SET completeuser= CONCAT(completeuser,",", #{0}  ) WHERE oneid = '101';
     </update>
 
     <update id='updateWeiboServiceToNull' parameterType="String">
