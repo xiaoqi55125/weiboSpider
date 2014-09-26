@@ -45,7 +45,7 @@ public class WeiboService implements Runnable  {
                     e.printStackTrace();
                 }
             }
-            System.out.println("===>Play"+userName+" arrived.");
+            System.out.println("===>微博用户->"+userName+" 抓取完成.");
             updateCompleteData(userName);
         }catch (InterruptedException e) {
             // TODO: handle exception

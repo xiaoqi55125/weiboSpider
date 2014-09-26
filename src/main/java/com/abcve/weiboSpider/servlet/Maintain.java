@@ -299,7 +299,7 @@ public class Maintain extends HttpServlet {
             // TODO: handle exception
             e.printStackTrace();
         }finally{
-            System.out.println("Race ends!");
+            System.out.println("抓取完成 ends!");
         }
         exe.shutdown();
         resp.getWriter().print("success");
